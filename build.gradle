@@ -1,0 +1,61 @@
+
+buildscript {
+    ext {
+
+    }
+}
+
+plugins {
+    id "com.github.kt3k.coveralls" version "2.12.0"
+}
+
+allprojects {
+    group "com.anz.code.stack"
+    version = project.ext.has('packageVersion') ? "${project.ext.packageVersion}" : "1.0.SNAPSHOT"
+
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'maven-publish'
+    apply from: "${project.parent.rootDir}/coverage.gradle"
+    apply plugin: 'project-report'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+
+    configurations.all {
+        exclude group: "ch.qos.logback"
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+    }
+
+    dependencies {
+        implementation(platform("org.apache.logging.log4j:log4j-bom:$log4j2Version"))
+
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        compileOnly "org.mapstruct:mapstruct:$mapstructVersion"
+
+        annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+        annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.1.0"
+
+        testImplementation "org.spockframework:spock-core:$spockSpringVersion"
+        testImplementation "org.mapstruct:mapstruct:$mapstructVersion"
+    }
+
+
+    test {
+        useJUnitPlatform()
+    }
+}

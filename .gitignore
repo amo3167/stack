@@ -1,0 +1,7 @@
+**/generated/
+**/out/
+**/build/
+**/.gradle
+**/.idea
+**/*.iml
+
